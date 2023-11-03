@@ -5,49 +5,7 @@
 ## Copy this script inside the kernel directory
 KERNEL_DEFCONFIG=sweet_defconfig ## Ini defconfignya setiap type hape beda2 (redmi note 10 pro menggunakan sweet_defconfig)
 ANYKERNEL3_DIR=$PWD/AnyKernel3/ ## ini anykernel nya gunanya untuk membukus hasil compile untuk siap flash
-FINAL_KERNEL_ZIP=X-Derm-Kernel-$(date '+%Y%m%d').zip ## INI NAMA KERNEL zip NYA
-# setup telegram env
-
-
-export CHATID API_BOT TYPE_KERNEL
-export WAKTU=$(date +"%T")
-export TGL=$(date +"%d-%m-%Y")
-export BOT_MSG_URL="https://api.telegram.org/bot$API_BOT/sendMessage"
-export BOT_BUILD_URL="https://api.telegram.org/bot$API_BOT/sendDocument"
-
-tg_sticker() {
-   curl -s -X POST "https://api.telegram.org/bot$API_BOT/sendSticker" \
-        -d sticker="$1" \
-        -d chat_id=$CHATID
-}
-
-tg_post_msg() {
-        curl -s -X POST "$BOT_MSG_URL" -d chat_id="$2" \
-        -d "parse_mode=markdown" \
-        -d text="$1"
-}
-
-tg_post_build() {
-        #Post MD5Checksum alongwith for easeness
-        MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
-
-        #Show the Checksum alongwith caption
-        curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
-        -F chat_id="$2" \
-        -F "disable_web_page_preview=true" \
-        -F "parse_mode=markdown" \
-        -F caption="$3 MD5 \`$MD5CHECK\`"
-}
-
-tg_error() {
-        curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
-        -F chat_id="$2" \
-        -F "disable_web_page_preview=true" \
-        -F "parse_mode=html" \
-        -F caption="$3Failed to build , check <code>error.log</code>"
-}
-
-
+FINAL_KERNEL_ZIP=Aghisna-Kernel-$(date '+%Y%m%d').zip ## INI NAMA KERNEL zip NYA
 export PATH="$HOME/cosmic/bin:$PATH"
 export ARCH=arm64
 export SUBARCH=arm64
@@ -57,7 +15,8 @@ git clone --depth=1 -b master https://github.com/RooGhz720/Anykernel3.git AnyKer
 
 if ! [ -d "$HOME/cosmic" ]; then
 echo "Cosmic clang not found! Cloning..."
-if ! git clone -q https://gitlab.com/PixelOS-Devices/playgroundtc.git --depth=1 -b 17 ~/cosmic; then ## ini Clang nya tools untuk membangun/compile kernel nya (tidak semua kernel mendukung clang)
+#if ! git clone -q https://gitlab.com/PixelOS-Devices/playgroundtc.git --depth=1 -b 17 ~/cosmic; then ## ini Clang nya tools untuk membangun/compile kernel nya (tidak semua kernel mendukung clang)
+if ! git clone -q https://gitlab.com/GhostMaster69-dev/cosmic-clang.git --depth=1 -b master ~/cosmic; then
 echo "Cloning failed! Aborting..."
 exit 1
 fi
@@ -134,29 +93,10 @@ BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
 
-# stiker post
-echo "Uploading your kernel.."
+echo "**** Uploading your zip now ****"
+if command -v curl &> /dev/null; then
+curl -T $FINAL_KERNEL_ZIP temp.sh
+else
+echo "Zip: $FINAL_KERNEL_ZIP"
+fi
 
-DATE=$(date +"%Y%m%d-%H%M%S")
-KERVER=$(make kernelversion)
-KOMIT=$(git log --pretty=format:'"%h : %s"' -2)
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-TYPE="MIUI"
-
-TEXT1="
-*Build Completed Successfully*
-━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━
-* Device* : \`$DEVICE\`
-* Code name* : \`Sweet | Sweetin\`
-* Variant Build* : \`$TYPE\`
-* Time Build* : \`$(($DIFF / 60)) menit\`
-* Branch Build* : \`$BRANCH\`
-* System Build* : \`$MESIN\`
-* Date Build* : \`$TGL\` \`$WAKTU\`
-* Last Commit* : \`$KOMIT\`
-* Author* : @fchelz
-━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━"
-
-                tg_post_msg "$TEXT1" "$CHATID"
-                tg_post_build "$FINAL_KERNEL_ZIP" "$CHATID"
-exit
