@@ -63,13 +63,6 @@ export TGL=$(date +"%d-%m-%Y")
 export BOT_MSG_URL="https://api.telegram.org/bot$API_BOT/sendMessage"
 export BOT_BUILD_URL="https://api.telegram.org/bot$API_BOT/sendDocument"
 
-
-tg_sticker() {
-   curl -s -X POST "https://api.telegram.org/bot$API_BOT/sendSticker" \
-        -d sticker="$1" \
-        -d chat_id=$CHATID
-}
-
 tg_post_msg() {
         curl -s -X POST "$BOT_MSG_URL" -d chat_id="$2" \
         -d "parse_mode=markdown" \
@@ -77,15 +70,11 @@ tg_post_msg() {
 }
 
 tg_post_build() {
-        #Post MD5Checksum alongwith for easeness
-        MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
-
         #Show the Checksum alongwith caption
         curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
         -F chat_id="$2" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=markdown" \
-#        -F caption="$3 MD5 \`$MD5CHECK\`"
 }
 
 tg_error() {
@@ -169,27 +158,11 @@ export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
                 echo -e "$red << Gagal dalam membangun kernel!!! , cek kembali kode anda >>$white"
                 tg_post_msg "GAGAL!!! uploading log"
                 tg_error "error.log" "$CHATID"
-                tg_post_msg "done" "$CHATID"
                 rm -rf out
                 rm -rf testing.log
                 rm -rf error.log
                 exit 1
         fi
-
-TEXT1="
-*Build Completed Successfully*
-━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━
-* Device* : \`$DEVICE\`
-* Code name* : \`Sweet | Sweetin\`
-* Variant Build* : \`$TYPE\`
-* Time Build* : \`$(($Diff / 60)) menit\`
-* Branch Build* : \`$BRANCH\`
-* System Build* : \`$MESIN\`
-* Date Build* : \`$TGL\` \`$WAKTU\`
-* Last Commit* : \`$KOMIT\`
-* Author* : @fchelz
-━━━━━━━━━ஜ۩۞۩ஜ━━━━━━━━"
-
         if [ -f "$IMG" ]; then
                 echo -e "$green << cloning AnyKernel from your repo >> \n $white"
                 git clone --depth=1 "$AnyKernel" --single-branch -b "$AnyKernelbranch" zip
@@ -202,7 +175,6 @@ TEXT1="
                 zip -r9 "$ZIP" * -x .git README.md LICENSE *placeholder
                 curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
                 java -jar zipsigner-3.0.jar "$ZIP".zip "$ZIP"-signed.zip
-                tg_post_msg "$TEXT1" "$CHATID"
                 tg_post_build "$ZIP"-signed.zip "$CHATID"
                 cd ..
                 rm -rf error.log
