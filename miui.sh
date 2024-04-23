@@ -56,7 +56,7 @@ tg_post_build() {
         curl --progress-bar -F document=@"$1" "$BOT_BUILD_URL" \
         -F chat_id="$2" \
         -F "disable_web_page_preview=true" \
-        -F "parse_mode=markdown" \
+        -F "parse_mode=markdown" 
 }
 
 tg_error() {
