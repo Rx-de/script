@@ -164,4 +164,4 @@ export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
                 rm -rf zip
                 rm -rf testing.log
                 exit
-        fi
+	fi
