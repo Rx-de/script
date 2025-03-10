@@ -69,7 +69,7 @@ tg_error() {
 
 #if ! [ -d "$HOME/cosmic" ]; then
 if ! [ -d "HOME/zyc-clang" ]; then
-echo "Cosmic clang not found! Cloning..."
+echo "ZyC-clang not found! Cloning..."
 #if ! git clone -q https://gitlab.com/GhostMaster69-dev/cosmic-clang.git --depth=1 -b master ~/cosmic; then
 if ! git clone -q https://gitlab.com/clangsantoni/zyc_clang.git --depth=1 -b 21 ~/zyc-clang; then
 echo "Cloning failed! Aborting..."
