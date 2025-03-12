@@ -30,7 +30,7 @@ export CHATID API_BOT TYPE_KERNEL
 TYPE="MIUI"
 DEVICE="Redmi note 10 pro"
 KERNEL_NAME="X-Derm"
-DEFCONFIG="sweet_defconfig"
+#DEFCONFIG="sweet_defconfig"
 AnyKernel="https://github.com/RooGhz720/Anykernel3"
 AnyKernelbranch="master"
 HOSST="Vҽ.."
@@ -38,6 +38,15 @@ USEER="root"
 ID="1"
 MESIN="Git Workflows"
 
+if [ "$DEVICE_TYPE" == sweet  ];
+then
+DEVICE="REDMI NOTE 10 PRO (MIUI)"
+KERNEL_NAME="SLEEPY_KERNEL"
+CODENAME="SWEET"
+
+DEFCONFIG_COMMON="vendor/sdmsteppe-perf_defconfig"
+DEFCONFIG_DEVICE="vendor/sweet.config"
+fi
 
 # setup telegram env
 export WAKTU=$(date +"%T")
