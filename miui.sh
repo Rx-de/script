@@ -33,7 +33,7 @@ KERNEL_NAME="X-Derm"
 DEFCONFIG="sweet_defconfig"
 AnyKernel="https://github.com/RooGhz720/Anykernel3"
 AnyKernelbranch="master"
-HOSST="Fchelz"
+HOSST="Vҽ.."
 USEER="root"
 ID="1"
 MESIN="Git Workflows"
@@ -67,16 +67,20 @@ tg_error() {
         -F caption="$3Failed to build , check <code>error.log</code>"
 }
 
-if ! [ -d "$HOME/cosmic" ]; then
-echo "Cosmic clang not found! Cloning..."
-if ! git clone -q https://gitlab.com/GhostMaster69-dev/cosmic-clang.git --depth=1 -b master ~/cosmic; then
+#if ! [ -d "$HOME/cosmic" ]; then
+if ! [ -d "HOME/zyc-clang" ]; then
+echo "ZyC-clang not found! Cloning..."
+#if ! git clone -q https://gitlab.com/GhostMaster69-dev/cosmic-clang.git --depth=1 -b master ~/cosmic; then
+if ! git clone -q https://gitlab.com/clangsantoni/zyc_clang.git --depth=1 -b 21 ~/zyc-clang; then
 echo "Cloning failed! Aborting..."
 exit 1
 fi
 fi
 
-export PATH="$HOME/cosmic/bin:$PATH"
-export KBUILD_COMPILER_STRING="$($HOME/cosmic/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+#export PATH="$HOME/cosmic/bin:$PATH"
+export PATH="$HOME/zyc-clang/bin:$PATH"
+export KBUILD_COMPILER_STRING="$($HOME/zyc-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+#export KBUILD_COMPILER_STRING="$($HOME/cosmic/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 
 # Speed up build process
 MAKE="./makeparallel"
